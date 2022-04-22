@@ -1,6 +1,7 @@
 import jax
 import jax.numpy as jnp
-from .utils import (get_modulo, ring_polyadd, ring_polymul)
+from scipy.fftpack import shift
+from .utils import (get_modulo, ring_polyadd, ring_polymul, shift_mod)
 
 class Context:
     def __init__(self,
@@ -26,14 +27,17 @@ class Context:
         self.p = p
 
         self.sk = jax.random.randint(
-            jax_key, (self.N,), 0, q).astype(int)  # TODO secret key
+            jax_key, (self.N,), -q//2, q//2).astype(int)  # TODO secret key
 
-        self.e = jnp.array([1]) # TODO noise
+        self.sk_square = shift_mod(ring_polymul(self.sk, self.sk, self.modulo), q)
 
-        a = jax.random.randint(jax_key, (self.N,), 0, self.Q)
-        a_s = jnp.mod(ring_polymul(a, self.sk, self.modulo), self.Q)[-self.N:]
+        self.e = jnp.array([0]) # TODO noise
+
+        a = jax.random.randint(jax_key, (self.N,), -self.Q//2, self.Q//2)
+
+        a_s = shift_mod(ring_polymul(a, self.sk, self.modulo), self.Q)[-self.N:]
 
         self.pub_key = [
-            jnp.mod(ring_polyadd(-a_s, self.e, self.modulo), self.Q),
+            shift_mod(ring_polyadd(-a_s, self.e, self.modulo), self.Q),
             a
         ]

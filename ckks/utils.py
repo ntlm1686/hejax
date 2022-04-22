@@ -1,5 +1,7 @@
+from importlib.util import module_for_loader
 import jax
 import jax.numpy as jnp
+from jax import jit
 
 def ring_polymul(poly1, poly2, modulo):
     return jnp.polydiv(jnp.polymul(poly1, poly2), modulo)[1]
@@ -12,3 +14,7 @@ def get_modulo(M: int) -> jnp.array:
     modulo = modulo.at[0].set(1)
     modulo = modulo.at[-1].set(1)
     return modulo
+
+def shift_mod(x, modulo):
+    modulo_half = modulo // 2
+    return jnp.mod(x + modulo_half, modulo_half * 2) - modulo_half
