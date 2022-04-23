@@ -7,7 +7,7 @@ from functools import partial
 from jax.lax import scan
 from typing import List
 
-from .utils import (ring_polyadd, ring_polymul, shift_mod)
+from .utils import (ring_polymul, shift_mod)
 from .context import Context
 
 
@@ -26,7 +26,7 @@ class Encryptor:
     def encrypt(self, message: jnp.array) -> jnp.array:
         ''' TODO (simple case) encrypt a message '''
         return [
-            shift_mod(ring_polyadd(self.pub_key[0], message, self.modulo), self.Q),
+            shift_mod(jnp.polyadd(self.pub_key[0], message), self.Q),
             self.pub_key[1]
         ]
 
@@ -39,7 +39,7 @@ class Encryptor:
         return shift_mod(
             jnp.polyadd(
                 ciphertext[0],
-                ring_polymul(ciphertext[1], self.sk, self.modulo)
-            )[-self.N:], # trim zeros (jax issue)
+                ring_polymul(ciphertext[1], self.sk, self.modulo)[-self.N:]
+            ), # trim zeros (jax issue)
             (self.p**l) * self.q
             )

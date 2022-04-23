@@ -1,22 +1,25 @@
 import jax
 import jax.numpy as jnp
 from scipy.fftpack import shift
-from .utils import (get_modulo, ring_polyadd, ring_polymul, shift_mod)
+from .utils import (get_modulo, ring_polymul, shift_mod)
+
 
 class Context:
     def __init__(self,
                  M,
                  scale,
                  # ^^^ encoder
-                 q, # base modulus
-                 p, # base multiplier (prime? TODO)
-                 l, # level
-                 L, # level limit
-                 P, # rescaling parameter
+                 q,  # base modulus
+                 p,  # base multiplier (prime? TODO)
+                 l,  # level
+                 L,  # level limit
+                 P,  # rescaling parameter
                  # ^^^ encryptor
                  seed=0
                  ):
         jax_key = jax.random.PRNGKey(seed)
+
+        self.scale = scale
 
         self.M = M
         self.N = M // 2
@@ -25,19 +28,34 @@ class Context:
         self.q = q
         self.Q = q * (p ** L)
         self.p = p
+        self.P = P
 
         self.sk = jax.random.randint(
             jax_key, (self.N,), -q//2, q//2).astype(int)  # TODO secret key
 
-        self.sk_square = shift_mod(ring_polymul(self.sk, self.sk, self.modulo), q)
+        self.sk_square = ring_polymul(
+            self.sk, self.sk, self.modulo)[-self.N:]
 
-        self.e = jnp.array([0]) # TODO noise
+        self.e = jnp.array([0])  # TODO noise
+        self.e0 = jnp.array([0])  # TODO noise
 
-        a = jax.random.randint(jax_key, (self.N,), -self.Q//2, self.Q//2)
+        self.a = jax.random.randint(jax_key, (self.N,), -self.Q//2, self.Q//2)
+        a0 = jax.random.randint(jax_key, (self.N,), -self.Q//2*P, self.Q//2*P)
 
-        a_s = shift_mod(ring_polymul(a, self.sk, self.modulo), self.Q)[-self.N:]
+        self.a_s = shift_mod(ring_polymul(
+            self.a, self.sk, self.modulo), self.Q)[-self.N:]
+        a0_s = shift_mod(ring_polymul(
+            a0, self.sk, self.modulo), self.Q*P)[-self.N:]
 
         self.pub_key = [
-            shift_mod(ring_polyadd(-a_s, self.e, self.modulo), self.Q),
-            a
+            shift_mod(jnp.polyadd(-self.a_s, self.e), self.Q),
+            self.a
+        ]
+
+        self.evk = [
+            shift_mod(
+                jnp.polyadd(-a0_s, P * self.sk_square),
+                self.Q*P
+            ),
+            a0
         ]
