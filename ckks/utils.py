@@ -15,7 +15,7 @@ def get_modulo(M: int) -> jnp.array:
 
 def shift_mod(x, modulo):
     modulo_half = modulo // 2
-    return jnp.mod(x + modulo_half, modulo_half * 2) - modulo_half
+    return jnp.mod(x + modulo_half, modulo) - modulo_half
 
 
 # TODO example

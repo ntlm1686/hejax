@@ -2,6 +2,7 @@ import jax
 import jax.numpy as jnp
 from scipy.fftpack import shift
 from .utils import (get_modulo, ring_polymul, shift_mod)
+from ..polynomials.PolynomialRing import make_polynomial_ring
 
 
 class Context:
@@ -17,6 +18,7 @@ class Context:
                  # ^^^ encryptor
                  seed=0
                  ):
+        self.pr = make_polynomial_ring(q, M//2)
         jax_key = jax.random.PRNGKey(seed)
 
         self.scale = scale
