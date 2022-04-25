@@ -22,7 +22,7 @@ class Encoder:
     def vandermonde(self, x: jnp.array, M: int) -> jnp.array:
         N = M // 2
         roots = jnp.power(x, 2 * jnp.arange(N) + 1)
-        return jnp.vander(roots, N, increasing=True)
+        return jnp.vander(roots, N, increasing=False)
 
     def sigma_inverse(self, b: jnp.array) -> jnp.array:
         """Encodes the vector b in a polynomial using an M-th root of unity."""
@@ -34,7 +34,6 @@ class Encoder:
     def sigma(self, p: jnp.array) -> jnp.array:
         """Decodes a polynomial by applying it to the M-th roots of unity."""
         N = self.M // 2
-        p = jnp.flip(p)
         roots = jnp.power(self.xi, 2 * jnp.arange(N) + 1)
 
         _, outputs = scan(

@@ -85,24 +85,29 @@ class RLWECKKS:
             c0: ciphertext (c0, c1, ..., ck)
             c1: ciphertext (c'0, c'1, ..., c'k')
         '''
-        c = ()
+        # c = ()
 
-        k0 = len(c0) - 1
-        k1 = len(c1) - 1
+        # k0 = len(c0) - 1
+        # k1 = len(c1) - 1
 
-        for _ in range(k1):
-            c0 += (self.PR(jnp.array([0])),)
+        # for _ in range(k1):
+        #     c0 += (self.PR(jnp.array([0])),)
 
-        for _ in range(k0):
-            c1 += (self.PR(jnp.array([0])),)
+        # for _ in range(k0):
+        #     c1 += (self.PR(jnp.array([0])),)
 
-        for i in range(k0 + k1 + 1):
-            _c = self.PR(jnp.array([0]))
-            for j in range(i+1):
-                _c += c0[j] * c1[i-j]
-            c += (_c,)
+        # for i in range(k0 + k1 + 1):
+        #     _c = self.PR(jnp.array([0]))
+        #     for j in range(i+1):
+        #         _c += c0[j] * c1[i-j]
+        #     c += (_c,)
 
-        return c
+        # return c
+        return (
+            c0[0] * c1[0],
+            c0[0] * c1[1] + c0[1] * c1[0],
+            c0[1] * c1[1]
+        )
 
     def relinear(self, d):
         c0 = d[0] + (1/self.P * d[2] * self.evk[0]).round() # Z_q[x] * Z_Pq[x] -> Z_q[X]

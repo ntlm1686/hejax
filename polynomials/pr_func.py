@@ -69,9 +69,10 @@ def make_polynomial_ring_fn(n: int):
         @staticmethod
         @jit
         def pow(q: int, x: jnp.ndarray, k: int) -> jnp.ndarray:
-            """ Power of a polynomial. """
-            if k == 0:
-                return jnp.array([1])
+            """ Power of a polynomial.
+            TODO: currently only support k > 1.
+            """
+            assert k > 0
             ret = x
             for _ in range(k-1):
                 ret = _mul(ret, x, q)
@@ -106,7 +107,7 @@ def make_polynomial_ring_fn(n: int):
                 https://eprint.iacr.org/2016/421.pdf - page 11
             """
             jax_key = jax.random.PRNGKey(seed)
-            coeffs = jax.random.choice(jax_key, jnp.array([-1, 0, 1]), (n,), p =jnp.array([p/2, 1-p, p/2]))
+            coeffs = jax.random.choice(jax_key, jnp.array([-1, 0, 1]), (n,), p=jnp.array([p/2, 1-p, p/2]))
             return coeffs
 
         @staticmethod
@@ -119,6 +120,6 @@ def make_polynomial_ring_fn(n: int):
             coeffs = jnp.zeros(n)
             for i in ix:
                 coeffs = coeffs.at[i].set(random.sample([-1,1],1)[0])
-            coeffs
+            return coeffs
 
     return PR_FN
