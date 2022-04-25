@@ -1,7 +1,5 @@
 import jax.numpy as jnp
 
-from typing import List
-
 from polynomials.PolynomialRing import make_polynomial_ring
 
 
@@ -46,7 +44,7 @@ class RLWECKKS:
         e0 = self.PR.sample_gaussian(std=self.std, seed=self.seed)
         e1 = self.PR.sample_gaussian(std=self.std, seed=self.seed)
 
-        r = self.PR(jnp.array([1]))
+        r = self.PR(jnp.array([1,0,1]))
         m = self.PR(m)
 
         return (
@@ -110,3 +108,6 @@ class RLWECKKS:
         c0 = d[0] + (1/self.P * d[2] * self.evk[0]).round() # Z_q[x] * Z_Pq[x] -> Z_q[X]
         c1 = d[1] + (1/self.P * d[2] * self.evk[1]).round()
         return c0, c1
+
+    def rescale(self, d):
+        pass

@@ -1,4 +1,4 @@
-# Reference: https://blog.openmined.org/ckks-explained-part-1-simple-encoding-and-decoding/
+# This code is a JAX implementation of https://blog.openmined.org/ckks-explained-part-1-simple-encoding-and-decoding/
 
 import jax
 import jax.numpy as jnp
