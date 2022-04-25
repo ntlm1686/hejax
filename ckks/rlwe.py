@@ -14,8 +14,7 @@ class RLWE:
 
     def generate_keys(self):
         s = self.PR_c.sample_gaussian(std=self.std, seed=self.seed)
-        # e = self.PR_c.sample_gaussian(std=self.std, seed=self.seed)
-        e = self.PR_c(jnp.array([1]))
+        e = self.PR_c.sample_gaussian(std=self.std, seed=self.seed)
 
         a = self.PR_c.sample_uniform(seed=self.seed)
         b = -1 * (a * s + self.t * e)
@@ -29,9 +28,7 @@ class RLWE:
             a: public key (a0, a1)
         '''
         b, a = pk
-        # e = [self.PR_c.sample_gaussian(std=self.std, seed=self.seed)
-        #      for _ in range(3)]
-        e = [self.PR_c(jnp.array([1]))
+        e = [self.PR_c.sample_gaussian(std=self.std, seed=self.seed)
              for _ in range(3)]
 
         m = self.PR_c(m)
