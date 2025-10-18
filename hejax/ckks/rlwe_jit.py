@@ -4,7 +4,7 @@ from functools import partial
 import jax.numpy as jnp
 from jax import jit
 
-from polynomials.pr_func import make_polynomial_ring_fn
+from hejax.polynomials.pr_func import make_polynomial_ring_fn
 
 
 class Encryptor:

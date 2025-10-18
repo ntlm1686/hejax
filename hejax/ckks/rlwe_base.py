@@ -1,5 +1,5 @@
 import jax.numpy as jnp
-from polynomials.PolynomialRing import make_polynomial_ring
+from hejax.polynomials.PolynomialRing import make_polynomial_ring
 
 
 class RLWE:
